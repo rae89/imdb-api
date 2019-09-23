@@ -1,3 +1,4 @@
 .gitsecret/keys/random_seed
 !*.secret
 imdb-api-read.txt
+moviedb-key.txt
