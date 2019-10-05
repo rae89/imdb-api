@@ -1,4 +1,4 @@
-package main
+package themoviedb
 
 import (
 	"bytes"
@@ -12,7 +12,6 @@ import (
 )
 
 const (
-	path           = "/Users/gravitywaves/Projects/imdb-api/imdb-api-read.txt"
 	defaultBaseURL = "https://api.themoviedb.org"
 	apiVersion     = "3"
 	mediaType      = "application/json"
@@ -24,8 +23,8 @@ func check(e error) {
 	}
 }
 
-func getAPIKey(path string) string {
-	dat, err := ioutil.ReadFile(path)
+func getAPIKey(filePath string) string {
+	dat, err := ioutil.ReadFile(filePath)
 	check(err)
 	return string(dat)
 }
@@ -37,14 +36,15 @@ type Client struct {
 	client     *http.Client
 }
 
-func NewClient(apiKey string) *Client {
+func NewClient(filePath string) *Client {
 	return &Client{
 		baseURL:    defaultBaseURL,
 		apiVersion: apiVersion,
-		apiKey:     getAPIKey(path),
+		apiKey:     getAPIKey(filePath),
 		client:     http.DefaultClient,
 	}
 }
+
 
 func (c *Client) doRequest(method, endpoint string, data interface{}) ([]byte, error) {
 	// Encode data if we passed an object
@@ -53,7 +53,7 @@ func (c *Client) doRequest(method, endpoint string, data interface{}) ([]byte, e
 		// Create the encoder
 		enc := json.NewEncoder(b)
 		if err := enc.Encode(data); err != nil {
-			return nil, errors.Wrap(err, fmt.Sprintf("creating %s request to %s failed", method, uri))
+			return nil, errors.Wrap(err, "json encoding data for doRequest failed")
 		}
 	}
 
@@ -93,14 +93,10 @@ func (c *Client) doRequest(method, endpoint string, data interface{}) ([]byte, e
 
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return nil, errors.Wrap(err, fmt.Sprintf("decoding response from %s request to %s failed: body -> %s\n", methodm uri, string(body)))
+		return nil, errors.Wrap(err, fmt.Sprintf("decoding response from %s request to %s failed: body -> %s\n", method, uri, string(body)))
 	}
 
 	return body, nil
 
 }
 
-func main() {
-
-	fmt.Print(string("START"))
-}
