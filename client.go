@@ -45,7 +45,6 @@ func NewClient(filePath string) *Client {
 	}
 }
 
-
 func (c *Client) doRequest(method, endpoint string, data interface{}) ([]byte, error) {
 	// Encode data if we passed an object
 	b := bytes.NewBuffer(nil)
@@ -60,12 +59,13 @@ func (c *Client) doRequest(method, endpoint string, data interface{}) ([]byte, e
 	// Create the request
 	uri := fmt.Sprintf("%s/%s/%s", c.baseURL, c.apiVersion, strings.Trim(endpoint, "/"))
 	req, err := http.NewRequest(method, uri, b)
+	fmt.Println("URI: ", uri)
 	if err != nil {
 		return nil, errors.Wrap(err, fmt.Sprintf("creating %s request to %s failed", method, uri))
 	}
 
 	// Set the proper headers
-	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", c.apiKey))
+	// req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", c.apiKey))
 	req.Header.Set("Content-Type", mediaType)
 
 	// Do the request
@@ -75,20 +75,18 @@ func (c *Client) doRequest(method, endpoint string, data interface{}) ([]byte, e
 	}
 	defer resp.Body.Close()
 
+	fmt.Println(resp.StatusCode)
 	// Check that the response status code was OK
 	switch resp.StatusCode {
-		case http.StatusOK:
-		case http.StatusCreated:
-		case http.StatusUnauthorized:
-			return nil, fmt.Errorf("invalid access token")
-		case http.StatusForbidden:
-			return nil, fmt.Errorf("unauthorized access to endpoint")
-		case http.StatusNotFound:
-			return nil, fmt.Errorf("unauthorized access to endpoint")
-		case http.StatusBadRequest:
-			return nil, fmt.Errorf("the request in invailid")
-		default:
-			return nil, fmt.Errorf("bad response code: %d", resp.StatusCode)
+	case http.StatusOK:
+	case http.StatusCreated:
+	case http.StatusUnauthorized:
+	case http.StatusForbidden:
+	case http.StatusNotFound:
+	case http.StatusBadRequest:
+		return nil, fmt.Errorf("the request in invailid")
+	default:
+		return nil, fmt.Errorf("bad response code: %d", resp.StatusCode)
 	}
 
 	body, err := ioutil.ReadAll(resp.Body)
@@ -99,4 +97,3 @@ func (c *Client) doRequest(method, endpoint string, data interface{}) ([]byte, e
 	return body, nil
 
 }
-
