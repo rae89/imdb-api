@@ -13,12 +13,10 @@ import (
 
 func (c *Client) FindID(externalID string) (Find, error) {
 	var f Find
-	//data, err := c.doRequest(http.MethodGet, "/", nil)
 	data, err := c.doRequest(http.MethodGet, fmt.Sprintf("/%s/%s", FindEndpoint, externalID), nil)
 	if err != nil {
 		return f, err
 	}
-	fmt.Println("DATA", string(data))
 	err = json.Unmarshal(data, &f)
 	if err != nil {
 		return f, errors.Wrap(err, "failed to unmarshal find response")

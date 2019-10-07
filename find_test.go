@@ -46,7 +46,6 @@ func TestFind_FindID(t *testing.T) {
 			"tv_season_results": []
 		}`)
 	})
-	fmt.Println("ROUTE ENDPOINT: ", endpoint)
 	actual, err := client.FindID(testExternalID)
 	expected := Find{
 		MovieResults: []map[string]interface{}{
