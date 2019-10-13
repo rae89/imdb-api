@@ -9,7 +9,6 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-
 var (
 	mux    *http.ServeMux
 	client *Client
@@ -42,24 +41,22 @@ func Test_NewClient(t *testing.T) {
 	testClientDefaultBaseURL(t, c)
 }
 
-
 func Test_doRequest(t *testing.T) {
 	setup()
 	defer teardown()
 
 	testData := `{"testing":"things"}`
-	
+
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprint(w, testData)
 	})
 
-	actual, err := client.doRequest(http.MethodGet, "/", nil)
+	actual, err := client.doRequest(http.MethodGet, "/", nil, nil)
 	assert.NoError(t, err)
 
 	expected := []byte(testData)
 	assert.Equal(t, expected, actual)
 }
-
 
 func Test_doRequest_httpError(t *testing.T) {
 	setup()
@@ -69,8 +66,6 @@ func Test_doRequest_httpError(t *testing.T) {
 		http.Error(w, "Bad Request", 400)
 	})
 
-	_, err := client.doRequest(http.MethodGet, "/", nil)
+	_, err := client.doRequest(http.MethodGet, "/", nil, nil)
 	assert.Error(t, err)
 }
-
-

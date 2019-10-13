@@ -45,7 +45,7 @@ func NewClient(filePath string) *Client {
 	}
 }
 
-func (c *Client) doRequest(method, endpoint string, data interface{}) ([]byte, error) {
+func (c *Client) doRequest(method, endpoint string, data interface{}, queryparams map[string]string) ([]byte, error) {
 	// Encode data if we passed an object
 	b := bytes.NewBuffer(nil)
 	if data != nil {
@@ -59,6 +59,15 @@ func (c *Client) doRequest(method, endpoint string, data interface{}) ([]byte, e
 	// Create the request
 	uri := fmt.Sprintf("%s/%s/%s", c.baseURL, c.apiVersion, strings.Trim(endpoint, "/"))
 	req, err := http.NewRequest(method, uri, b)
+
+	if queryparams != nil {
+		q := req.URL.Query()
+		for k, v := range queryparams {
+			q.Add(k, v)
+		}
+		req.URL.RawQuery = q.Encode()
+	}
+
 	fmt.Println("URI: ", uri)
 	if err != nil {
 		return nil, errors.Wrap(err, fmt.Sprintf("creating %s request to %s failed", method, uri))

@@ -11,9 +11,9 @@ import (
 // https://developers.themoviedb.org/3/find/find-by-id
 // FindID search objects by exteral id
 
-func (c *Client) FindID(externalID string) (Find, error) {
+func (c *Client) FindID(externalID string, queryparams map[string]string) (Find, error) {
 	var f Find
-	data, err := c.doRequest(http.MethodGet, fmt.Sprintf("/%s/%s", FindEndpoint, externalID), nil)
+	data, err := c.doRequest(http.MethodGet, fmt.Sprintf("/%s/%s", FindEndpoint, externalID), nil, queryparams)
 	if err != nil {
 		return f, err
 	}

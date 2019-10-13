@@ -13,7 +13,12 @@ func TestFind_FindID(t *testing.T) {
 	defer teardown()
 
 	testExternalID := "tt0234215"
-	//testQueryParams := "api_key=09876545&external_source=imdb_id&language=en-US"
+
+	testQueryParams := map[string]string{
+		"api_key":         "09876545",
+		"external_source": "imdb_id",
+		"language":        "en-US",
+	}
 	endpoint := fmt.Sprintf("/%s/%s/%s/", apiVersion, FindEndpoint, testExternalID)
 	mux.HandleFunc(endpoint, func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprint(w, `{
@@ -46,7 +51,7 @@ func TestFind_FindID(t *testing.T) {
 			"tv_season_results": []
 		}`)
 	})
-	actual, err := client.FindID(testExternalID)
+	actual, err := client.FindID(testExternalID, testQueryParams)
 	expected := Find{
 		MovieResults: []map[string]interface{}{
 			{
