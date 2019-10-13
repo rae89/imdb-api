@@ -1,4 +1,4 @@
-module themoviedb
+module github.com/rae89/imdb-api
 
 go 1.13
 
